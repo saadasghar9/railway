@@ -7,8 +7,11 @@ def fetch_and_save_text(url):
         response = requests.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
-            page_text = ' '.join(soup.stripped_strings)  # Join text with spaces, ignoring empty strings
-            
+            page_text = ' '.join([p.get_text(strip=True) for p in soup.find_all('p')])
+            if not page_text:
+                page_text = ' '.join(soup.stripped_strings)
+            if not page_text:
+                raise Exception("No meaningful text extracted from the page")
             # Use the title for the filename or a default name
             title = soup.title.string if soup.title else "unknown_title"
             filename = ''.join(c for c in title if c.isalnum() or c.isspace()).strip()[:50] + ".txt"

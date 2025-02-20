@@ -4,7 +4,11 @@ import os
 
 def fetch_and_save_text(url):
     try:
-        response = requests.get(url)
+        # Add headers to ensure compatibility with most sites
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=10)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
             page_text = ' '.join([p.get_text(strip=True) for p in soup.find_all('p')])
@@ -12,19 +16,18 @@ def fetch_and_save_text(url):
                 page_text = ' '.join(soup.stripped_strings)
             if not page_text:
                 raise Exception("No meaningful text extracted from the page")
-            # Use the title for the filename or a default name
+            
             title = soup.title.string if soup.title else "unknown_title"
             filename = ''.join(c for c in title if c.isalnum() or c.isspace()).strip()[:50] + ".txt"
-            
-            # Save in a specific directory, perhaps in a 'downloads' folder within the app
             save_path = os.path.join(os.path.dirname(__file__), 'downloads', filename)
-            os.makedirs(os.path.dirname(save_path), exist_ok=True)  # Create directory if it doesn't exist
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
             
             with open(save_path, 'w', encoding='utf-8') as file:
                 file.write(page_text)
             
-            return f"Text content saved to {save_path}"
+            print(f"Text saved to {save_path}")  # Log the save, but don’t return it
+            return page_text  # Return the actual text
         else:
-            return f"Failed to retrieve content, status code: {response.status_code}"
+            raise Exception(f"Failed to retrieve content, status code: {response.status_code}")
     except requests.RequestException as e:
-        return f"An error occurred: {e}"
+        raise Exception(f"Failed to fetch URL: {str(e)}")

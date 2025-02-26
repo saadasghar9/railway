@@ -20,7 +20,7 @@ for package in ['punkt', 'brown']:
     except LookupError:
         nltk.download(package, download_dir=nltk_data_path, quiet=True)
 
-nlp = spacy.load("en_core_web_sm")
+
 from django.http import HttpResponse
 
 def home(request):
@@ -35,7 +35,7 @@ def home(request):
     return JsonResponse({"status": "success", "message": "Django server is running!"})
 
 def analyze_text(text):
-    
+    nlp = spacy.load("en_core_web_sm")
     try:
         # TextBlob for sentiment and top words
         blob = TextBlob(text)

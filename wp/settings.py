@@ -60,7 +60,7 @@ ROOT_URLCONF = 'wp.urls'
 CORS_ALLOWED_ORIGINS = [
     # "http://bilnowlocal.local",  # Match your WordPress local setup
     "https://saadasghar9.github.io",
-    "https://yourapp.up.railway.app",
+    "https://web-production-162b.up.railway.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

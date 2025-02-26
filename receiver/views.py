@@ -6,6 +6,20 @@ import json
 from .fetch_text import fetch_and_save_text
 from textblob import TextBlob
 import spacy
+import nltk
+import os
+
+# Set NLTK data path to a writable directory on Railway
+nltk_data_path = os.path.join(os.getenv('HOME', '/app'), 'nltk_data')
+nltk.data.path.append(nltk_data_path)
+
+# Download NLTK data if missing
+for package in ['punkt', 'brown']:
+    try:
+        nltk.data.find(f'tokenizers/{package}' if package == 'punkt' else f'corpora/{package}')
+    except LookupError:
+        nltk.download(package, download_dir=nltk_data_path, quiet=True)
+        
 from django.http import HttpResponse
 
 def home(request):

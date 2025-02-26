@@ -132,21 +132,23 @@ def fetch_text_view(request):
         return JsonResponse({"status": "error", "message": f"An error occurred: {str(e)}"}, status=500)
 @csrf_exempt  # Allow POST requests without CSRF for simplicity (adjust for security in production)
 def visualize_entities(request):
-    if request.method == 'GET':
-        text = request.GET.get('text', '')
-        if not text:
-            return JsonResponse({"status": "error", "message": "No text provided"}, status=400)
-    elif request.method == 'POST':
-        try:
+    try:
+        nlp = spacy.load("en_core_web_sm")
+        if request.method == 'GET':
+            text = request.GET.get('text', '')
+            if not text:
+                return JsonResponse({"status": "error", "message": "No text provided"}, status=400)
+        elif request.method == 'POST':
             data = json.loads(request.body.decode('utf-8'))
             text = data.get('text', '')
             if not text:
                 return JsonResponse({"status": "error", "message": "No text provided in POST body"}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"status": "error", "message": "Invalid JSON in POST body"}, status=400)
-    else:
-        return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
+        else:
+            return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
 
-    doc = nlp(text)
-    html = spacy.displacy.render(doc, style="ent", page=True)
-    return HttpResponse(html, content_type="text/html")
+        doc = nlp(text)
+        html = spacy.displacy.render(doc, style="ent", page=True)
+        return HttpResponse(html, content_type="text/html")
+    except Exception as e:
+        logger.error(f"Visualization error: {str(e)}")
+        return HttpResponse(f"Server Error: {str(e)}", status=500)

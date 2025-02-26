@@ -77,7 +77,8 @@ def receive_text(request):
         analysis = analyze_text(user_text)
 
         # Generate a URL for the visualization
-        visualization_url = f"{request.scheme}://{request.get_host()}/api/visualize/?text={user_text}"
+        visualization_url = f"https://web-production-162b.up.railway.app/api/visualize/?text={user_text}"
+        # visualization_url = f"{request.scheme}://{request.get_host()}/api/visualize/?text={user_text}"
 
         return JsonResponse({
             "status": "success",

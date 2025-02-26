@@ -14,12 +14,13 @@ def home(request):
 
 
 # Load spaCy's English model once at startup
-nlp = spacy.load("en_core_web_sm")
+
 
 def home(request):
     return JsonResponse({"status": "success", "message": "Django server is running!"})
 
 def analyze_text(text):
+    nlp = spacy.load("en_core_web_sm")
     try:
         # TextBlob for sentiment and top words
         blob = TextBlob(text)

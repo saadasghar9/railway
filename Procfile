@@ -1,1 +1,1 @@
-web: python manage.py migrate && python -m spacy download en_core_web_sm --no-cache-dir && python -m textblob.download_corpora && gunicorn wp.wsgi:application
+web: python manage.py migrate && python -m spacy download en_core_web_sm --no-cache-dir && python -c "import nltk; nltk.download('punkt'); nltk.download('brown')" && gunicorn wp.wsgi:application

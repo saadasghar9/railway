@@ -6,4 +6,3 @@ requests==2.32.3
 beautifulsoup4==4.12.3
 django-cors-headers==4.5.0
 nltk==3.8.1
-en-core-web-trf @ https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.7.3/en_core_web_trf-3.7.3-py3-none-any.whl

@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn wp.wsgi:application
+web: python manage.py migrate && python -m spacy download en_core_web_sm --no-cache-dir && gunicorn wp.wsgi:application

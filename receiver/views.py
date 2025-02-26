@@ -60,11 +60,15 @@ def receive_text(request):
 
         analysis = analyze_text(user_text)
 
+        # Generate a URL for the visualization
+        visualization_url = f"{request.scheme}://{request.get_host()}/api/visualize/?text={user_text}"
+
         return JsonResponse({
             "status": "success",
             "message": "Text received and analyzed",
             "text": user_text,
-            "analysis": analysis
+            "analysis": analysis,
+            "visualization_url": visualization_url  # Add this for frontend to fetch visualization
         })
     except json.JSONDecodeError as e:
         print(f"JSON Decoding Error: {str(e)}")
@@ -87,6 +91,9 @@ def fetch_text_view(request):
         if not url:
             return JsonResponse({"status": "error", "message": "URL not provided"}, status=400)
 
+        if not url.startswith("http"):
+            return JsonResponse({"status": "error", "message": "Invalid URL provided"}, status=400)
+
         extracted_text = fetch_and_save_text(url)
         if not extracted_text:
             return JsonResponse({"status": "error", "message": "No text extracted from URL"}, status=400)
@@ -98,7 +105,8 @@ def fetch_text_view(request):
             "message": "URL processed and analyzed",
             "url": url,
             "extracted_text": extracted_text,
-            "analysis": analysis
+            "analysis": analysis,
+            "visualization_data": {"text": extracted_text}  # Data for POST to visualize
         })
     except json.JSONDecodeError as e:
         print(f"JSON Decoding Error: {str(e)}")
@@ -106,3 +114,23 @@ def fetch_text_view(request):
     except Exception as e:
         print(f"Error: {str(e)}")
         return JsonResponse({"status": "error", "message": f"An error occurred: {str(e)}"}, status=500)
+@csrf_exempt  # Allow POST requests without CSRF for simplicity (adjust for security in production)
+def visualize_entities(request):
+    if request.method == 'GET':
+        text = request.GET.get('text', '')
+        if not text:
+            return JsonResponse({"status": "error", "message": "No text provided"}, status=400)
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            text = data.get('text', '')
+            if not text:
+                return JsonResponse({"status": "error", "message": "No text provided in POST body"}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({"status": "error", "message": "Invalid JSON in POST body"}, status=400)
+    else:
+        return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
+
+    doc = nlp(text)
+    html = spacy.displacy.render(doc, style="ent", page=True)
+    return HttpResponse(html, content_type="text/html")

@@ -1,0 +1,7 @@
+Django==5.1.6
+gunicorn==23.0.0  # WSGI server for Railway
+textblob==0.18.0.post0
+spacy==3.7.5
+requests==2.32.3
+beautifulsoup4==4.12.3
+django-cors-headers==4.5.0

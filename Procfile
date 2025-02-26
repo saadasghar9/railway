@@ -1,0 +1,1 @@
+web: python manage.py migrate && python -m spacy download en_core_web_sm && gunicorn wp.wsgi:application

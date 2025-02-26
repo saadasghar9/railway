@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+spacy_env/  # Exclude your spaCy env folder
+db.sqlite3
+staticfiles/
+downloads/
+*.log

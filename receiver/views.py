@@ -35,7 +35,7 @@ def home(request):
     return JsonResponse({"status": "success", "message": "Django server is running!"})
 
 def analyze_text(text):
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("en_core_web_trf")
     try:
         # TextBlob for sentiment and top words
         blob = TextBlob(text)
@@ -134,7 +134,7 @@ def fetch_text_view(request):
 @csrf_exempt  # Allow POST requests without CSRF for simplicity (adjust for security in production)
 def visualize_entities(request):
     try:
-        nlp = spacy.load("en_core_web_sm")
+        nlp = spacy.load("en_core_web_trf")
         if request.method == 'GET':
             text = request.GET.get('text', '')
             if not text:
